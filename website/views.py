@@ -4,12 +4,12 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def about_views(request):
-    return render(request,'about.html')
+    return render(request,'website1/about.html')
 
 def index_views(request):
-    return render(request,'index.html')
+    return render(request,'website1/index.html')
 
 def contact_views(request):
-    return render(request,'contact.html')
-def web_views(request):
-    return render(request,'website1/web.html')
+    return render(request,'website1/contact.html')
+def elements_views(request):
+    return render(request,'website1/elements.html')
