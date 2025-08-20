@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'multi_captcha_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,13 +40,32 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django_extensions',
+    'django_summernote',
+    'robots',
+    'captcha',
+    'debug_toolbar',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'taggit',
+    'accounts',
     'website.apps.WebsiteConfig',
     'blog'
 ]
-
+#site framework
 SITE_ID = 2
+
+#robots
+ROBOTS_USE_SITEMAP = True  #or False
+ROBOTS_USE_SITEMAP = True  #or False
+
+#summernote configs
+SUMMERNOTE_THEME = 'bs4'  # Show summernote with Bootstrap4
+
+# captcha admin settings
+MULTI_CAPTCHA_ADMIN = {
+    'engine' : 'simple-captcha',
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -136,3 +157,7 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

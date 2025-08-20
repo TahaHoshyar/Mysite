@@ -1,14 +1,19 @@
-from django.shortcuts import render , get_object_or_404
-from blog.models import Post
+from django.shortcuts import render , get_object_or_404 , redirect
+from blog.models import Post , Comment
 from django.core.paginator import Paginator , PageNotAnInteger , EmptyPage
+from blog.forms import CommentForm
+from django.contrib import messages
+
 # Create your views here.
 
-def blog_views(request, cat_name=None, author_username=None):
+def blog_views(request,**kwargs):
     post = Post.objects.filter(status=1)
-    if cat_name:
-        post = post.filter(category__name=cat_name)
-    if author_username:
-        post = post.filter(author__username=author_username)
+    if kwargs.get('cat_name') != None:
+        post = post.filter(category__name=kwargs['cat_name'])
+    if kwargs.get('author_username') != None:
+        post = post.filter(author__username=kwargs['author_username'])
+    if kwargs.get('tag_name') != None:
+        post = post.filter(tags__name__in=[kwargs['tag_name']])
     post = Paginator(post, 3)
     try:
         page_number = request.GET.get('page')
@@ -21,12 +26,23 @@ def blog_views(request, cat_name=None, author_username=None):
     return render(request, 'blog/blog-home.html', context)
     
 def blog_single(request,pid):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request,messages.SUCCESS,'your comment submitted successfully')
+        else:
+            messages.add_message(request,messages.ERROR,'your comment did not submit')
+            
     posts = Post.objects.filter(status=1)
     post = get_object_or_404(posts, pk=pid)
-    #post = Post.objects.all()
-    #post = Post.objects.filter(status=1)
-    context = {'post':post}
-    return render(request , 'blog/blog-single.html',context)
+    if not post.login_require:
+        comments = Comment.objects.filter(post=post.id,approved=True)
+        form = CommentForm()
+        context = {'post':post , 'comments':comments , 'form':form}
+        return render(request , 'blog/blog-single.html',context)
+    else:
+        return redirect('/accounts/login')
 
 def test_views(request):
     return render(request , 'test.html') 
